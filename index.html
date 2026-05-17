@@ -6239,7 +6239,9 @@
 
         function filterBlog(category) {
             document.querySelectorAll('#blog-filters .tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
 
             document.querySelectorAll('#blog-grid article').forEach(card => {
                 if (category === 'all' || card.dataset.blogCategory === category) {
@@ -6260,6 +6262,16 @@
             document.getElementById('blog-post-view').classList.remove('hidden');
             document.getElementById('blog-post-content').innerHTML = post.content;
 
+            // Add click handlers to calculator links in blog content
+            document.querySelectorAll('#blog-post-content a[href^="#/"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const calcId = this.href.substring(2); // Remove '#/'
+                    closeBlogPost();
+                    setTimeout(() => openCalculator(calcId), 300);
+                });
+            });
+
             window.scrollTo({ top: document.getElementById('blog').offsetTop - 80, behavior: 'smooth' });
         }
 
@@ -6268,6 +6280,11 @@
             document.getElementById('featured-posts').style.display = 'grid';
             document.getElementById('blog-filters').style.display = 'flex';
             document.getElementById('blog-post-view').classList.add('hidden');
+            filterBlog('all');
+            document.querySelectorAll('#blog-filters .tab-btn').forEach((btn, idx) => {
+                if (idx === 0) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
             window.scrollTo({ top: document.getElementById('blog').offsetTop - 80, behavior: 'smooth' });
         }
 
