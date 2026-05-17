@@ -3807,7 +3807,7 @@
                     if (weighted >= 2.0) standing = 'Satisfactory';
                     if (weighted >= 3.0) standing = 'Good';
                     if (weighted >= 3.5) standing = 'Excellent';
-                    if (weighted >= 3.8) standing = 'Dean's List';
+                    if (weighted >= 3.8) standing = "Dean's List";
 
                     return {
                         results: [
@@ -4281,10 +4281,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCalculatorGrid();
-            renderBlogPosts();
         // ==================== BLOG SYSTEM ====================
         const blogPosts = [
             {
@@ -6275,13 +6271,10 @@
             window.scrollTo({ top: document.getElementById('blog').offsetTop - 80, behavior: 'smooth' });
         }
 
-        // Initialize blog on load
-        document.addEventListener('DOMContentLoaded', () => {
-            renderBlogPosts();
-        });
-// ==================== INITIALIZATION ====================
+        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', () => {
             renderCalculatorGrid();
+            renderBlogPosts();
 
             if (window.location.hash && window.location.hash !== '#calculators') {
                 const id = window.location.hash.substring(1);

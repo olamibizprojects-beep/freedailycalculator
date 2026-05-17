@@ -1,14 +1,18 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security: CORS configuration - adjust for your domain
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
+  : ['http://localhost:3000', 'https://yourdomain.com'];
+
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'https://yourdomain.com'],
+  origin: allowedOrigins,
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
@@ -106,11 +110,28 @@ app.post('/api/chat', rateLimit, async (req, res) => {
 });
 
 // Serve static files (frontend)
-app.use(express.static('.'));
+const staticPath = path.join(__dirname);
+const blockedPaths = new Set([
+  '/server.js',
+  '/package.json',
+  '/package-lock.json',
+  '/.env',
+  '/README.md',
+  '/DEPLOYMENT.md'
+]);
+
+app.use((req, res, next) => {
+  if (blockedPaths.has(req.path)) {
+    return res.status(404).end();
+  }
+  next();
+});
+
+app.use(express.static(staticPath, { index: false }));
 
 // SPA fallback for hash routing
 app.get('*', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
